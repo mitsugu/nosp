@@ -2,64 +2,45 @@ package main
 
 import (
 	"os"
+	"io/ioutil"
+	"path/filepath"
+	"regexp"
+	"strconv"
+	"strings"
+	"time"
 	"errors"
 	//"log"
 	//"fmt"
-	"path/filepath"
-	"io/ioutil"
-	"strings"
-	"strconv"
-	"time"
-	"regexp"
 	"encoding/json"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/nbd-wtf/go-nostr/nip19"
 )
+
+const (
+	timeLayout = "2006-01-02 15:04:05 MST"
+)
+
 type CONTENTS struct {
-	Date	string	`json:"date"`
-	PubKey	string	`json:"pubkey"`
-	Content	string	`json:"content"`
+	Date    string `json:"date"`
+	PubKey  string `json:"pubkey"`
+	Content string `json:"content"`
 }
 type NOSTRLOG struct {
-	Id			string
-	Contents	CONTENTS
+	Id       string
+	Contents CONTENTS
 }
 
 func main() {
-	p := make(map[string]CONTENTS)
-	b, err := load("hoge.json")
-	if err!=nil {
+	var wb []NOSTRLOG // 受信データ
+	if err:=GetHomeTimeline(&wb);err!=nil{
 		panic(err)
 	}
-	err = json.Unmarshal([]byte(b), &p)
-	if err != nil {
-		panic(err)
-	}
-	var wb []NOSTRLOG
-	cnt :=0
-	for i:= range p {
-		tmp:= NOSTRLOG{i,p[i]}
-		wb = append(wb,tmp)
-		cnt ++
-	}
+	buf := FormatTimelineForDisplay(wb) // buf is string
 
-	var l []string
-	for i := range wb {
-		d,err := strconv.ParseInt(wb[i].Contents.Date,10,64)
-		if err!=nil {
-			d=int64(0)
-		}
-		ut := time.Unix(d,0)
-		ut.Format("2006-01-02 15:04:05 MST")
-		npub, err := nip19.EncodePublicKey(wb[i].Contents.PubKey)
-		if err!=nil{
-			panic(err)
-		}
-		l = append(l, "---\n"+strconv.Itoa(i)+"\n"+ut.Format("2006-01-02 15:04:05 MST")+"\n@"+npub+"\n"+wb[i].Contents.Content+"\n\n")
-	}
-	buf := strings.Join(l,"")
-
+	/*
+	Building User Interface
+	*/
 	app := tview.NewApplication()
 	textView := tview.NewTextView()
 	inputField := tview.NewInputField()
@@ -90,11 +71,19 @@ func main() {
 	inputField.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyEnter:
-			str := inputField.GetText()
-			if str=="quit" || str=="exit"{
+			var cmd []string
+			_ = ParseCommandLine(inputField.GetText(), &cmd)
+			switch cmd[0] {
+			case "q", "quit", "exit":
 				app.Stop()
+			case "getHome":
+				/*
+				var wb []NOSTRLOG
+				if err:=GetHomeTimeline(&wb);err!=nil{
+					panic(err)
+				}
+				*/
 			}
-			textView.SetText(textView.GetText(true) + str + "\n")
 			inputField.SetText("")
 			return nil
 		case tcell.KeyEscape:
@@ -115,26 +104,125 @@ func main() {
 }
 
 /*
+ParseCommandLine
+*/
+func ParseCommandLine(cmd string,str *[]string) error {
+	switch (cmd) {
+	case "q":
+		*str = append(*str,cmd)
+	case "quit":
+		*str = append(*str,cmd)
+	case "exit":
+		*str = append(*str,cmd)
+	default:
+		r := strings.Split(cmd," ")
+		switch (r[0]) {
+		case "getHome":
+			for i := range r {
+				switch i {
+				case 0:
+					*str = append(*str,r[i])
+				case 1,2:
+					_,err :=strconv.ParseInt(r[i],10,32)
+					if err!=nil {
+						_, err := time.Parse(timeLayout, r[i])
+						if err!=nil {
+							return errors.New("Illegal option")
+						}
+					}
+					*str = append(*str,r[i])
+				default:
+					return errors.New("Too many option")
+				}
+			}
+		default:
+			return errors.New("Not support command")
+		}
+	}
+	return nil
+}
+
+// 
+
+/*
+FormatTimelineForDisplay
+*/
+func FormatTimelineForDisplay(wb []NOSTRLOG)string{
+	var l []string
+	for i := range wb {
+		d, err := strconv.ParseInt(wb[i].Contents.Date, 10, 64)
+		if err != nil {
+			d = int64(0)
+		}
+		ut := time.Unix(d, 0)
+		ut.Format("2006-01-02 15:04:05 MST")
+		npub, err := nip19.EncodePublicKey(wb[i].Contents.PubKey)
+		if err != nil {
+			panic(err)
+		}
+		l = append(l, "---\n")
+		l = append(l, strconv.Itoa(i) +"\n")
+		l = append(l, ut.Format("2006-01-02 15:04:05 MST")+"\n")
+		l = append(l, "@"+npub+"\n")
+		l = append(l, strings.Replace(wb[i].Contents.Content, "\\n", "\n", -1))
+		l = append(l, "\n\n")
+	}
+	buf := strings.Join(l, "")
+	return buf
+}
+
+//
+
+/*
+getHomeTimeline {{{
+*/
+func GetHomeTimeline(wb *[]NOSTRLOG)error{
+	p := make(map[string]CONTENTS)
+	b, err := load("hoge.json")
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal([]byte(b), &p)
+	if err != nil {
+		return err
+	}
+
+	cnt := 0
+	for i := range p {
+		tmp := NOSTRLOG{i, p[i]}
+		*wb = append(*wb, tmp)
+		cnt++
+	}
+	return nil
+}
+
+// }}}
+
+/*
 load {{{
 */
-func load(fn string) (string,error) {
+func load(fn string) (string, error) {
 	d, err := getDir()
 	if err != nil {
-		return "",err
+		return "", err
 	}
 	path := filepath.Join(d, fn)
 	tmp, err := ioutil.ReadFile(path)
 	if err != nil {
-		return "",err
+		return "", err
 	}
-	rep := regexp.MustCompile(`},\n}`)
-	str := rep.ReplaceAllString(string(tmp), "}\n}")
-	str = strings.ReplaceAll(str, "\n", "")
+	rep := regexp.MustCompile("{\n\"")
+	str := rep.ReplaceAllString(string(tmp), "{\"")
+	rep = regexp.MustCompile("},\n}\n")
+	str = rep.ReplaceAllString(str, "}}")
+	rep = regexp.MustCompile("},\n\"")
+	str = rep.ReplaceAllString(str, "}, \"")
+	str = strings.ReplaceAll(str, "\n", "\\n")
 
 	return str, nil
 }
 
-//}}}
+// }}}
 
 /*
 getDir {{{
@@ -154,4 +242,3 @@ func getDir() (string, error) {
 }
 
 // }}}
-
