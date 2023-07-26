@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 	"errors"
-	//"log"
+	"log"
 	//"fmt"
 	"encoding/json"
 	"github.com/gdamore/tcell/v2"
@@ -184,6 +184,10 @@ func GetHomeTimeline(wb *[]NOSTRLOG)error{
 	}
 	err = json.Unmarshal([]byte(b), &p)
 	if err != nil {
+		if err, ok := err.(*json.SyntaxError); ok {
+			log.Println(string(b[err.Offset-15:err.Offset+15]))
+		}
+		log.Fatal(err)
 		return err
 	}
 
