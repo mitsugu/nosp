@@ -38,8 +38,6 @@ type CONTACT struct {
 }
 
 func main() {
-	buf := "Execute getHome command"
-
 	/*
 		Building User Interface
 	*/
@@ -64,7 +62,7 @@ func main() {
 		}
 		return event
 	})
-	textView.SetText(buf)
+	textView.SetText(getHelpText())
 
 	/*
 		inputField settings
@@ -78,9 +76,13 @@ func main() {
 			switch cl {
 			case "q", "quit", "exit":
 				app.Stop()
-			case "initEnv":
+			case "clear":
+				textView.SetText(getHelpText())
+				app.SetFocus(textView)
+			case "init":
 			case "help":
 				textView.SetText(getHelpText())
+				app.SetFocus(textView)
 			default:
 				switch strings.Split(cl, " ")[0] {
 				case "getHome":
@@ -94,6 +96,7 @@ func main() {
 				}
 			}
 			inputField.SetText("")
+			app.SetFocus(textView)
 			return nil
 		case tcell.KeyEscape:
 			app.SetFocus(textView)
@@ -127,6 +130,7 @@ func getHelpText() string {
 	helptxt += "  \"l\" key : scroll right pager aria\n\n"
 
 	helptxt += "  help    : display this help\n"
+	helptxt += "  clear   : display this help\n"
 	helptxt += "  init    : Initialize the environment ( exec \"nostk init\", not yet )\n\n"
 
 	helptxt += "  genKey  : Generate key pair\n"
