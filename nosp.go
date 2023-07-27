@@ -80,6 +80,8 @@ func main() {
 			case "q", "quit", "exit":
 				app.Stop()
 			case "initEnv":
+			case "help":
+				textView.SetText("help : display this help.\nquit : quit nosp\nq    : quit nosp ( same quit )\nexit : exit nosp ( same quit )\ngetHome [2006-01-02 15:04:05 MST] : get home timeline\n")
 			default:
 				switch strings.Split(cl, " ")[0] {
 				case "getHome":
