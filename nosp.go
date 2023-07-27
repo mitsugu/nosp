@@ -80,7 +80,7 @@ func main() {
 				app.Stop()
 			case "initEnv":
 			case "help":
-				textView.SetText("help : display this help.\nquit : quit nosp\nq    : quit nosp ( same quit )\nexit : exit nosp ( same quit )\ngetHome [2006-01-02 15:04:05 MST] : get home timeline\n")
+				textView.SetText("Usage nosp\n\n  \":\" key : set forcus command line\n  ESC key : set forcus pager aria\n\n  help : display this help.\n  init : Initialize the environment ( exec \"nostk init\" )\n  quit : quit nosp\n  q    : quit nosp ( same quit )\n  exit : exit nosp ( same quit )\n  getHome [2006-01-02 15:04:05 MST] : get home timeline\n")
 			default:
 				switch strings.Split(cl, " ")[0] {
 				case "getHome":
