@@ -85,7 +85,7 @@ func main() {
 				app.SetFocus(textView)
 			default:
 				switch strings.Split(cl, " ")[0] {
-				case "getHome":
+				case "gethome":
 					var wb []NOSTRLOG
 					if err := GetHomeTimeline(&wb, cl); err != nil {
 						panic(err)
@@ -127,23 +127,28 @@ func getHelpText() string {
 	helptxt += "  \"j\" key : scroll down pager aria\n"
 	helptxt += "  \"k\" key : scroll up pager aria\n"
 	helptxt += "  \"h\" key : scroll left pager aria\n"
-	helptxt += "  \"l\" key : scroll right pager aria\n\n"
+	helptxt += "  \"l\" key : scroll right pager aria\n"
+	helptxt += "  \"g\" key : Jump pager aria's top\n"
+	helptxt += "  \"G\" key : Jump pager aria's bottom\n\n"
 
+
+	helptxt += "  Command   Note\n"
+	helptxt += "  ======== ============================================================\n"
 	helptxt += "  help    : display this help\n"
 	helptxt += "  clear   : display this help\n"
 	helptxt += "  init    : Initialize the environment ( exec \"nostk init\", not yet )\n\n"
 
-	helptxt += "  genKey  : Generate key pair\n"
-	helptxt += "  addUser : Add new key pair ( not yet )\n"
-	helptxt += "  lsUser  : Liset user's ( not yet )\n"
-	helptxt += "  chUser  : Change user ( not yet )\n"
-	helptxt += "  rmUser  : Remove user ( not yet )\n\n"
+	helptxt += "  genkey  : Generate key pair\n"
+	helptxt += "  adduser : Add new key pair ( not yet )\n"
+	helptxt += "  lsuser  : Liset user's ( not yet )\n"
+	helptxt += "  chuser  : Change user ( not yet )\n"
+	helptxt += "  rmuser  : Remove user ( not yet )\n\n"
 
 	helptxt += "  quit    : quit nosp\n"
 	helptxt += "  q       : quit nosp ( same quit )\n"
 	helptxt += "  exit    : exit nosp ( same quit )\n\n"
 
-	helptxt += "  getHome [2006-01-02 15:04:05 MST] : get home timeline\n"
+	helptxt += "  gethome [2006-01-02 15:04:05 MST] : get home timeline\n"
 	return helptxt
 }
 
@@ -193,7 +198,7 @@ GetHomeTimeline {{{
 */
 func GetHomeTimeline(wb *[]NOSTRLOG, cl string) error {
 	strtmp := ""
-	if cl == "getHome" {
+	if cl == "gethome" {
 		cmd := exec.Command("nostk", "dispHome")
 		buf, err := cmd.CombinedOutput()
 		if err != nil {
