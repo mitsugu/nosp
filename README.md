@@ -1,4 +1,4 @@
-nostk
+nosp
 ========
 TUI pager for log files output by [nostk](https://github.com/mitsugu/nostk)
 
@@ -34,5 +34,10 @@ TUI pager for log files output by [nostk](https://github.com/mitsugu/nostk)
 ### Install nostk:
 ```bash
 go install github.com/mitsugu/nosp@latest
+```
+
+### Usage
+```bash
+nosp
 ```
 
