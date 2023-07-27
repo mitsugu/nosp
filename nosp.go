@@ -80,7 +80,7 @@ func main() {
 				app.Stop()
 			case "initEnv":
 			case "help":
-				textView.SetText("Usage nosp\n\n  \":\" key : set forcus command line\n  ESC key : set forcus pager aria\n\n  help : display this help.\n  init : Initialize the environment ( exec \"nostk init\" )\n  quit : quit nosp\n  q    : quit nosp ( same quit )\n  exit : exit nosp ( same quit )\n  getHome [2006-01-02 15:04:05 MST] : get home timeline\n")
+				textView.SetText(getHelpText())
 			default:
 				switch strings.Split(cl, " ")[0] {
 				case "getHome":
@@ -113,6 +113,37 @@ func main() {
 		panic(err)
 	}
 }
+
+/*
+getHelpText {{{
+*/
+func getHelpText() string {
+	helptxt := "Usage nosp\n\n"
+	helptxt += "  \":\" key : set forcus command line\n"
+	helptxt += "  ESC key : set forcus pager aria\n"
+	helptxt += "  \"j\" key : scroll down pager aria\n"
+	helptxt += "  \"k\" key : scroll up pager aria\n"
+	helptxt += "  \"h\" key : scroll left pager aria\n"
+	helptxt += "  \"l\" key : scroll right pager aria\n\n"
+
+	helptxt += "  help    : display this help\n"
+	helptxt += "  init    : Initialize the environment ( exec \"nostk init\", not yet )\n\n"
+
+	helptxt += "  genKey  : Generate key pair\n"
+	helptxt += "  addUser : Add new key pair ( not yet )\n"
+	helptxt += "  lsUser  : Liset user's ( not yet )\n"
+	helptxt += "  chUser  : Change user ( not yet )\n"
+	helptxt += "  rmUser  : Remove user ( not yet )\n\n"
+
+	helptxt += "  quit    : quit nosp\n"
+	helptxt += "  q       : quit nosp ( same quit )\n"
+	helptxt += "  exit    : exit nosp ( same quit )\n\n"
+
+	helptxt += "  getHome [2006-01-02 15:04:05 MST] : get home timeline\n"
+	return helptxt
+}
+
+// }}}
 
 /*
 FormatTimelineForDisplay {{{
