@@ -1,16 +1,16 @@
 package main
 
 import (
-	"os"
 	"encoding/json"
+	"errors"
+	"io/ioutil"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
-	"path/filepath"
-	"io/ioutil"
-	"errors"
 	//"fmt"
 	"github.com/gdamore/tcell/v2"
 	//"github.com/nbd-wtf/go-nostr/nip19"
@@ -18,9 +18,9 @@ import (
 )
 
 const (
-	timeLayout = "2006-01-02 15:04:05 MST"
-	secretDir = ".nostk"
-	contactsFile  = "contacts.json"
+	timeLayout   = "2006-01-02 15:04:05 MST"
+	secretDir    = ".nostk"
+	contactsFile = "contacts.json"
 )
 
 type CONTENTS struct {
@@ -33,10 +33,9 @@ type NOSTRLOG struct {
 	Contents CONTENTS
 }
 type CONTACT struct {
-	Url	 string	`json:"url"`
-	Name string	`json:"name"`
+	Url  string `json:"url"`
+	Name string `json:"name"`
 }
-
 
 func main() {
 	buf := "Execute getHome command"
@@ -116,12 +115,12 @@ func main() {
 }
 
 /*
-	FormatTimelineForDisplay {{{
+FormatTimelineForDisplay {{{
 */
 func FormatTimelineForDisplay(wb []NOSTRLOG) string {
 	p := make(map[string]CONTACT)
-	cbuf,err := load(contactsFile)
-	if err!=nil {
+	cbuf, err := load(contactsFile)
+	if err != nil {
 		panic(err)
 	}
 	err = json.Unmarshal([]byte(cbuf), &p)
@@ -155,7 +154,7 @@ func FormatTimelineForDisplay(wb []NOSTRLOG) string {
 // }}}
 
 /*
-	GetHomeTimeline {{{
+GetHomeTimeline {{{
 */
 func GetHomeTimeline(wb *[]NOSTRLOG, cl string) error {
 	strtmp := ""
@@ -246,4 +245,3 @@ func getDir() (string, error) {
 }
 
 // }}}
-
