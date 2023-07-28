@@ -27,6 +27,7 @@ TUI pager for log files output by [nostk](https://github.com/mitsugu/nostk)
 * [nbd-wtf / go-nostr](https://github.com/nbd-wtf/go-nostr)
 * [rivo / tview](https://github.com/rivo/tview)
 * [gdamore / tcell](https://github.com/gdamore/tcell)
+* [git](https://git-scm.com/)
 * Some kind of text editor
 * Setting $HOME environment variable
 * Setting $EDITOR environment variable
