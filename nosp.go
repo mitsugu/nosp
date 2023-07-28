@@ -138,7 +138,6 @@ func getHelpText() string {
 	helptxt += "  clear   : display this help\n"
 	helptxt += "  init    : Initialize the environment ( exec \"nostk init\", comming soom )\n\n"
 
-	helptxt += "  genkey  : Generate key pair ( comming soom )\n"
 	helptxt += "  adduser : Add new key pair ( comming soom )\n"
 	helptxt += "  lsuser  : Display user name list ( comming soom )\n"
 	helptxt += "  chuser  : Change user ( comming soom )\n"
