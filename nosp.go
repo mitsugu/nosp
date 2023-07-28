@@ -140,7 +140,7 @@ func getHelpText() string {
 
 	helptxt += "  genkey  : Generate key pair ( comming soom )\n"
 	helptxt += "  adduser : Add new key pair ( comming soom )\n"
-	helptxt += "  lsuser  : Liset user's ( comming soom )\n"
+	helptxt += "  lsuser  : Display user name list ( comming soom )\n"
 	helptxt += "  chuser  : Change user ( comming soom )\n"
 	helptxt += "  rmuser  : Remove user ( comming soom )\n\n"
 
