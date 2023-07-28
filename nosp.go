@@ -83,6 +83,13 @@ func main() {
 			case "help":
 				textView.SetText(getHelpText())
 				app.SetFocus(textView)
+			case "lsuser":
+				ul, err := GetUserList()
+				if err!=nil {
+					break;
+				}
+				textView.SetText(ul)
+				app.SetFocus(textView)
 			default:
 				switch strings.Split(cl, " ")[0] {
 				case "gethome":
@@ -139,7 +146,7 @@ func getHelpText() string {
 	helptxt += "  init    : Initialize the environment ( exec \"nostk init\", comming soom )\n\n"
 
 	helptxt += "  adduser : Add new key pair ( comming soom )\n"
-	helptxt += "  lsuser  : Display user name list ( comming soom )\n"
+	helptxt += "  lsuser  : Display user name list\n"
 	helptxt += "  chuser  : Change user ( comming soom )\n"
 	helptxt += "  rmuser  : Remove user ( comming soom )\n\n"
 
@@ -188,6 +195,44 @@ func FormatTimelineForDisplay(wb []NOSTRLOG) string {
 	}
 	buf := strings.Join(l, "")
 	return buf
+}
+
+// }}}
+
+/*
+getUserList {{{
+*/
+func GetUserList() (string, error) {
+	c := "pwd"
+	rpwd, err :=ExecShell(c)
+	if err!= nil {
+		return "", err
+	}
+	d, err :=getDir()
+	if err!=nil {
+		return "",err
+	}
+	c = "cd "+d+"; git branch; "+"cd "+rpwd
+	buf, err :=ExecShell(c)
+	if err!= nil {
+		return "", err
+	}
+
+	return string(buf), nil
+}
+
+// }}}
+
+/*
+ExecShell {{{
+*/
+func ExecShell(cl string) (string,error) {
+	cmd := exec.Command("/bin/sh","-c",cl)
+	buf, err := cmd.CombinedOutput()
+	if err != nil {
+		return "",err
+	}
+	return string(buf),nil
 }
 
 // }}}
@@ -284,3 +329,4 @@ func getDir() (string, error) {
 }
 
 // }}}
+
