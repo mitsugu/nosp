@@ -102,6 +102,13 @@ func main() {
 					}
 					buf := FormatTimelineForDisplay(wb) // buf is string
 					textView.SetText(buf)
+				case "chuser":
+					scl :=strings.Split(cl, " ")
+					buf, err := ChangeUser(scl)
+					if err!=nil {
+						break
+					}
+					textView.SetText(buf)
 				default:
 				}
 			}
@@ -227,7 +234,7 @@ func GetUserList() (string, error) {
 // }}}
 
 /*
-InitEnv
+InitEnv {{{
 */
 func InitEnv() error {
 	if err := CheckDir();err==nil {
@@ -253,6 +260,37 @@ func InitEnv() error {
 		return err
 	}
 	return nil
+}
+
+// }}}
+
+/*
+ChangeUser
+*/
+func ChangeUser(s []string) (string,error) {
+	if len(s)<2 {
+		return "",errors.New("Not specified username")
+	}
+	c := "pwd"
+	rpwd, err :=ExecShell(c)
+	if err!= nil {
+		return "",err
+	}
+	d, err :=getDir()
+	if err!=nil {
+		return "",err
+	}
+	c = "cd "+d+"; git checkout "+s[1]+"; cd "+rpwd
+	_, err = ExecShell(c)
+	if err!= nil {
+		return "",err
+	}
+	c = "cd "+d+"; git branch; cd "+rpwd
+	buf, err := ExecShell(c)
+	if err!= nil {
+		return "",err
+	}
+	return buf, nil
 }
 
 //
