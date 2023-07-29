@@ -157,7 +157,7 @@ func getHelpText() string {
 
 	helptxt += "  adduser : Add new key pair ( comming soom )\n"
 	helptxt += "  lsuser  : Display user name list\n"
-	helptxt += "  chuser  : Change user ( comming soom )\n"
+	helptxt += "  chuser  : Change user\n"
 	helptxt += "  rmuser  : Remove user ( comming soom )\n\n"
 
 	helptxt += "  quit    : quit nosp\n"
@@ -265,7 +265,7 @@ func InitEnv() error {
 // }}}
 
 /*
-ChangeUser
+ChangeUser {{{
 */
 func ChangeUser(s []string) (string,error) {
 	if len(s)<2 {
@@ -293,7 +293,7 @@ func ChangeUser(s []string) (string,error) {
 	return buf, nil
 }
 
-//
+// }}}
 
 /*
 ExecShell {{{
