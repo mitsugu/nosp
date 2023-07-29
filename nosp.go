@@ -161,8 +161,8 @@ func getHelpText() string {
 	helptxt += "  rmuser  : Remove user ( comming soom )\n\n"
 
 	helptxt += "  quit    : quit nosp\n"
-	helptxt += "  q       : quit nosp ( same quit )\n"
-	helptxt += "  exit    : exit nosp ( same quit )\n\n"
+	helptxt += "  q       : quit nosp\n"
+	helptxt += "  exit    : exit nosp\n\n"
 
 	helptxt += "  gethome [2006-01-02 15:04:05 MST] : get home timeline\n"
 	return helptxt
