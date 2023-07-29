@@ -80,13 +80,16 @@ func main() {
 				textView.SetText(getHelpText())
 				app.SetFocus(textView)
 			case "init":
+				if err:=InitEnv();err!=nil {
+					break
+				}
 			case "help":
 				textView.SetText(getHelpText())
 				app.SetFocus(textView)
 			case "lsuser":
 				ul, err := GetUserList()
 				if err!=nil {
-					break;
+					break
 				}
 				textView.SetText(ul)
 				app.SetFocus(textView)
@@ -143,7 +146,7 @@ func getHelpText() string {
 	helptxt += "  ======== ============================================================\n"
 	helptxt += "  help    : display this help\n"
 	helptxt += "  clear   : display this help\n"
-	helptxt += "  init    : Initialize the environment ( exec \"nostk init\", comming soom )\n\n"
+	helptxt += "  init    : Initialize the environment ( exec \"nostk init\" )\n\n"
 
 	helptxt += "  adduser : Add new key pair ( comming soom )\n"
 	helptxt += "  lsuser  : Display user name list\n"
@@ -222,6 +225,37 @@ func GetUserList() (string, error) {
 }
 
 // }}}
+
+/*
+InitEnv
+*/
+func InitEnv() error {
+	if err := CheckDir();err==nil {
+		return nil
+	}
+	c := "nostk init"
+	_, err :=ExecShell(c)
+	if err!= nil {
+		return err
+	}
+	c = "pwd"
+	rpwd, err :=ExecShell(c)
+	if err!= nil {
+		return err
+	}
+	d, err :=getDir()
+	if err!=nil {
+		return err
+	}
+	c = "cd "+d+"; git init; git add .; git commit -m \"create first user\";"+"cd "+rpwd
+	_, err =ExecShell(c)
+	if err!= nil {
+		return err
+	}
+	return nil
+}
+
+//
 
 /*
 ExecShell {{{
@@ -326,6 +360,23 @@ func getDir() (string, error) {
 		}
 	}
 	return home, nil
+}
+
+// }}}
+
+/*
+CheckDir {{{
+*/
+func CheckDir() error {
+	home := os.Getenv("HOME")
+	if home == "" {
+		return errors.New("Not set HOME environment variables")
+	}
+	home = filepath.Join(home, secretDir)
+	if _, err := os.Stat(home); err != nil {
+		return err
+	}
+	return nil
 }
 
 // }}}
