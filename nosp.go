@@ -156,7 +156,7 @@ func getHelpText() string {
 	helptxt += "  init    : Initialize the environment\n\n"
 
 	helptxt += "  adduser : Add new key pair ( comming soom )\n"
-	helptxt += "  lsuser  : Display user name list\n"
+	helptxt += "  lsuser  : Display user list\n"
 	helptxt += "  chuser  : Change user\n"
 	helptxt += "  rmuser  : Remove user ( comming soom )\n\n"
 
