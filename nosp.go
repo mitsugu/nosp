@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -245,6 +244,11 @@ func InitEnv() error {
 	if err!= nil {
 		return err
 	}
+	c = "nostk genkey"
+	_, err =ExecShell(c)
+	if err!= nil {
+		return err
+	}
 	c = "pwd"
 	rpwd, err :=ExecShell(c)
 	if err!= nil {
@@ -373,7 +377,7 @@ func load(fn string) (string, error) {
 		return "", err
 	}
 	path := filepath.Join(d, fn)
-	b, err := ioutil.ReadFile(path)
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
 	}
