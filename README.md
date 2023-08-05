@@ -7,11 +7,10 @@ TUI pager for log files output by [nostk](https://github.com/mitsugu/nostk)
 * Go Language 1.20.5 and later
 
 ### Features
+* Initializing the nostk environment include generating first user ( generating a key pair )
 * Display home timeline
 
 ### ToDo
-* Initializing the nostk environment
-* Generating a key pair
 * Edit your contact list
 * Edit custom emoji list
 * Edit relay list
