@@ -41,6 +41,7 @@ func main() {
 	/*
 		Building User Interface
 	*/
+	//startDebug("/home/mitsugu/Downloads/error.log")
 	app := tview.NewApplication()
 	flex := tview.NewFlex()
 	textView := tview.NewTextView()
@@ -323,7 +324,7 @@ func ExecShell(cl string) (string,error) {
 // }}}
 
 /*
-GetHomeTimeline
+GetHomeTimeline {{{
 */
 func GetHomeTimeline(wb *[]NOSTRLOG, cl string) error {
 	strtmp := ""
@@ -337,7 +338,6 @@ func GetHomeTimeline(wb *[]NOSTRLOG, cl string) error {
 	} else {
 		str := strings.Replace(cl, "cathome ", "", -1)
 		str = strings.Replace(str, "\"", "", -1)
-		//str = "\"" + str + "\""
 		cmd := exec.Command("nostk", "catHome", str)
 		buf, err := cmd.CombinedOutput()
 		if err != nil {
@@ -358,12 +358,6 @@ func GetHomeTimeline(wb *[]NOSTRLOG, cl string) error {
 	p := make(map[string]CONTENTS)
 	err := json.Unmarshal([]byte(str), &p)
 	if err != nil {
-log.Printf("error : %#v\n",err)
-		/* for test
-		if err, ok := err.(*json.SyntaxError); ok {
-		log.Println(string(str[err.Offset-15:err.Offset+15]))
-		}
-		*/
 		return err
 	}
 
@@ -377,7 +371,7 @@ log.Printf("error : %#v\n",err)
 	return nil
 }
 
-//
+// }}}
 
 /*
 GetSelfPosts {{{
@@ -393,6 +387,7 @@ func GetSelfPosts(wb *[]NOSTRLOG, cl string) error {
 		strtmp = string(buf)
 	} else {
 		str := strings.Replace(cl, "catself ", "", -1)
+		str = strings.Replace(str, "\"", "", -1)
 		cmd := exec.Command("nostk", "catSelf", str)
 		buf, err := cmd.CombinedOutput()
 		if err != nil {
@@ -413,11 +408,6 @@ func GetSelfPosts(wb *[]NOSTRLOG, cl string) error {
 	p := make(map[string]CONTENTS)
 	err := json.Unmarshal([]byte(str), &p)
 	if err != nil {
-		/* for test
-		if err, ok := err.(*json.SyntaxError); ok {
-		log.Println(string(str[err.Offset-15:err.Offset+15]))
-		}
-		*/
 		return err
 	}
 
@@ -491,8 +481,8 @@ func CheckDir() error {
 /*
 debugPrint {{{
 */
-func startDebug() {
-	f,err := os.OpenFile("/home/mitsugu/Downloads/error.log", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600 )
+func startDebug(path string) {
+	f,err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600 )
 	if(err!=nil) {
 		panic( err )
 	}
