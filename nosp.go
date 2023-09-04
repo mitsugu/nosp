@@ -354,6 +354,7 @@ func GetHomeTimeline(wb *[]NOSTRLOG, cl string) error {
 	str = strings.ReplaceAll(str, "\\.", ".")
 	str = strings.ReplaceAll(str, "\t", "\\t")
 	str = strings.ReplaceAll(str, "\n", "\\n")
+	str = strings.ReplaceAll(str, "}}\n", "\n")
 
 	p := make(map[string]CONTENTS)
 	err := json.Unmarshal([]byte(str), &p)
@@ -404,6 +405,7 @@ func GetSelfPosts(wb *[]NOSTRLOG, cl string) error {
 	str = strings.ReplaceAll(str, "\\.", ".")
 	str = strings.ReplaceAll(str, "\t", "\\t")
 	str = strings.ReplaceAll(str, "\n", "\\n")
+	//str = strings.ReplaceAll(str, "}}}", "}}")
 
 	p := make(map[string]CONTENTS)
 	err := json.Unmarshal([]byte(str), &p)
