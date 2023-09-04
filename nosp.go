@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 	//"fmt"
+	"log"
 	"github.com/gdamore/tcell/v2"
 	//"github.com/nbd-wtf/go-nostr/nip19"
 	"github.com/rivo/tview"
@@ -94,9 +95,16 @@ func main() {
 				app.SetFocus(textView)
 			default:
 				switch strings.Split(cl, " ")[0] {
-				case "gethome":
+				case "cathome":
 					var wb []NOSTRLOG
 					if err := GetHomeTimeline(&wb, cl); err != nil {
+						panic(err)
+					}
+					buf := FormatTimelineForDisplay(wb) // buf is string
+					textView.SetText(buf)
+				case "catself":
+					var wb []NOSTRLOG
+					if err := GetSelfPosts(&wb, cl); err != nil {
 						panic(err)
 					}
 					buf := FormatTimelineForDisplay(wb) // buf is string
@@ -163,7 +171,8 @@ func getHelpText() string {
 	helptxt += "  q       : quit nosp\n"
 	helptxt += "  exit    : exit nosp\n\n"
 
-	helptxt += "  gethome [2006-01-02 15:04:05 MST] : get home timeline\n"
+	helptxt += "  cathome [2006-01-02 15:04:05 MST] : display home timeline\n"
+	helptxt += "  catself [2006-01-02 15:04:05 MST] : display your posts\n"
 	return helptxt
 }
 
@@ -314,21 +323,77 @@ func ExecShell(cl string) (string,error) {
 // }}}
 
 /*
-GetHomeTimeline {{{
+GetHomeTimeline
 */
 func GetHomeTimeline(wb *[]NOSTRLOG, cl string) error {
 	strtmp := ""
-	if cl == "gethome" {
-		cmd := exec.Command("nostk", "dispHome")
+	if cl == "cathome" {
+		cmd := exec.Command("nostk", "catHome")
 		buf, err := cmd.CombinedOutput()
 		if err != nil {
 			return err
 		}
 		strtmp = string(buf)
 	} else {
-		str := strings.Replace(cl, "getHome ", "", -1)
+		str := strings.Replace(cl, "cathome ", "", -1)
+		str = strings.Replace(str, "\"", "", -1)
 		//str = "\"" + str + "\""
-		cmd := exec.Command("nostk", "dispHome", str)
+		cmd := exec.Command("nostk", "catHome", str)
+		buf, err := cmd.CombinedOutput()
+		if err != nil {
+			return err
+		}
+		strtmp = string(buf)
+	}
+	rep := regexp.MustCompile("{\n\"")
+	str := rep.ReplaceAllString(strtmp, "{\"")
+	rep = regexp.MustCompile("},\n}\n")
+	str = rep.ReplaceAllString(str, "}}")
+	rep = regexp.MustCompile("},\n\"")
+	str = rep.ReplaceAllString(str, "}, \"")
+	str = strings.ReplaceAll(str, "\\.", ".")
+	str = strings.ReplaceAll(str, "\t", "\\t")
+	str = strings.ReplaceAll(str, "\n", "\\n")
+
+	p := make(map[string]CONTENTS)
+	err := json.Unmarshal([]byte(str), &p)
+	if err != nil {
+log.Printf("error : %#v\n",err)
+		/* for test
+		if err, ok := err.(*json.SyntaxError); ok {
+		log.Println(string(str[err.Offset-15:err.Offset+15]))
+		}
+		*/
+		return err
+	}
+
+	cnt := 0
+	for i := range p {
+		tmp := NOSTRLOG{i, p[i]}
+		*wb = append(*wb, tmp)
+		cnt++
+	}
+
+	return nil
+}
+
+//
+
+/*
+GetSelfPosts {{{
+*/
+func GetSelfPosts(wb *[]NOSTRLOG, cl string) error {
+	strtmp := ""
+	if cl == "catself" {
+		cmd := exec.Command("nostk", "catSelf")
+		buf, err := cmd.CombinedOutput()
+		if err != nil {
+			return err
+		}
+		strtmp = string(buf)
+	} else {
+		str := strings.Replace(cl, "catself ", "", -1)
+		cmd := exec.Command("nostk", "catSelf", str)
 		buf, err := cmd.CombinedOutput()
 		if err != nil {
 			return err
@@ -423,3 +488,16 @@ func CheckDir() error {
 
 // }}}
 
+/*
+debugPrint {{{
+*/
+func startDebug() {
+	f,err := os.OpenFile("/home/mitsugu/Downloads/error.log", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600 )
+	if(err!=nil) {
+		panic( err )
+	}
+	log.SetOutput(f)
+	log.Println("start debug")
+}
+
+// }}}
