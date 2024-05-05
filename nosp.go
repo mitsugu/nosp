@@ -41,6 +41,7 @@ func main() {
 	/*
 		Building User Interface
 	*/
+	var wb []NOSTRLOG
 	//startDebug("/home/mitsugu/Downloads/error.log")
 	app := tview.NewApplication()
 	flex := tview.NewFlex()
@@ -97,14 +98,12 @@ func main() {
 			default:
 				switch strings.Split(cl, " ")[0] {
 				case "cathome":
-					var wb []NOSTRLOG
 					if err := GetHomeTimeline(&wb, cl); err != nil {
 						panic(err)
 					}
 					buf := FormatTimelineForDisplay(wb) // buf is string
 					textView.SetText(buf)
 				case "catself":
-					var wb []NOSTRLOG
 					if err := GetSelfPosts(&wb, cl); err != nil {
 						panic(err)
 					}
@@ -117,6 +116,12 @@ func main() {
 						break
 					}
 					textView.SetText(buf)
+				case "fav":
+					scl :=strings.Split(cl, " ")
+					err := favEvent(wb, scl)
+					if err!=nil {
+						break
+					}
 				default:
 				}
 			}
@@ -405,7 +410,6 @@ func GetSelfPosts(wb *[]NOSTRLOG, cl string) error {
 	str = strings.ReplaceAll(str, "\\.", ".")
 	str = strings.ReplaceAll(str, "\t", "\\t")
 	str = strings.ReplaceAll(str, "\n", "\\n")
-	//str = strings.ReplaceAll(str, "}}}", "}}")
 
 	p := make(map[string]CONTENTS)
 	err := json.Unmarshal([]byte(str), &p)
@@ -424,6 +428,29 @@ func GetSelfPosts(wb *[]NOSTRLOG, cl string) error {
 }
 
 // }}}
+
+/*
+favEvent
+*/
+func favEvent(wb []NOSTRLOG, s []string) error {
+	i, err := strconv.Atoi(s[1])
+	if (err!=nil) {
+		return err
+	}
+	//cl := "emojiReaction "+wb[i].Id+" "+wb[i].Contents.PubKey+" \""+s[2]+"\""
+	cmd := exec.Command(
+		"nostk",
+		"emojiReaction",
+		wb[i].Id,
+		wb[i].Contents.PubKey,
+		" \""+s[2]+"\"")
+	buf, err := cmd.CombinedOutput()
+	log.Println(string(buf))
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 /*
 load {{{
