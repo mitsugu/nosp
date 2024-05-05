@@ -179,6 +179,7 @@ func getHelpText() string {
 
 	helptxt += "  cathome [2006-01-02 15:04:05 MST] : display home timeline\n"
 	helptxt += "  catself [2006-01-02 15:04:05 MST] : display your posts\n"
+	helptxt += "  fav <number> <reaction> : send reaction\n"
 	return helptxt
 }
 
