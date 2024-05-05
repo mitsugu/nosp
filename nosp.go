@@ -437,15 +437,13 @@ func favEvent(wb []NOSTRLOG, s []string) error {
 	if (err!=nil) {
 		return err
 	}
-	//cl := "emojiReaction "+wb[i].Id+" "+wb[i].Contents.PubKey+" \""+s[2]+"\""
 	cmd := exec.Command(
 		"nostk",
 		"emojiReaction",
 		wb[i].Id,
 		wb[i].Contents.PubKey,
-		" \""+s[2]+"\"")
-	buf, err := cmd.CombinedOutput()
-	log.Println(string(buf))
+		s[2])
+	_, err = cmd.CombinedOutput()
 	if err != nil {
 		return err
 	}
