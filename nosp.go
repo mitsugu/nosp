@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"sort"
 	//"fmt"
 	"log"
 	"github.com/gdamore/tcell/v2"
@@ -101,12 +102,18 @@ func main() {
 					if err := GetHomeTimeline(&wb, cl); err != nil {
 						panic(err)
 					}
+					sort.Slice(wb, func(i, j int) bool {
+					    return wb[i].Contents.Date > wb[j].Contents.Date
+					})
 					buf := FormatTimelineForDisplay(wb) // buf is string
 					textView.SetText(buf)
 				case "catself":
 					if err := GetSelfPosts(&wb, cl); err != nil {
 						panic(err)
 					}
+					sort.Slice(wb, func(i, j int) bool {
+					    return wb[i].Contents.Date > wb[j].Contents.Date
+					})
 					buf := FormatTimelineForDisplay(wb) // buf is string
 					textView.SetText(buf)
 				case "chuser":
@@ -431,7 +438,7 @@ func GetSelfPosts(wb *[]NOSTRLOG, cl string) error {
 // }}}
 
 /*
-favEvent
+favEvent {{{
 */
 func favEvent(wb []NOSTRLOG, s []string) error {
 	i, err := strconv.Atoi(s[1])
@@ -450,6 +457,7 @@ func favEvent(wb []NOSTRLOG, s []string) error {
 	}
 	return nil
 }
+// }}}
 
 /*
 load {{{
