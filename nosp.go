@@ -99,6 +99,7 @@ func main() {
 			default:
 				switch strings.Split(cl, " ")[0] {
 				case "cathome":
+					wb=nil
 					if err := GetHomeTimeline(&wb, cl); err != nil {
 						panic(err)
 					}
@@ -108,6 +109,7 @@ func main() {
 					buf := FormatTimelineForDisplay(wb) // buf is string
 					textView.SetText(buf)
 				case "catself":
+					wb=nil
 					if err := GetSelfPosts(&wb, cl); err != nil {
 						panic(err)
 					}
