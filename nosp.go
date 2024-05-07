@@ -131,6 +131,11 @@ func main() {
 					if err!=nil {
 						break
 					}
+				case "gvim":
+					err:=execGvim()
+					if err!=nil {
+						break
+					}
 				default:
 				}
 			}
@@ -454,6 +459,19 @@ func favEvent(wb []NOSTRLOG, s []string) error {
 		wb[i].Contents.PubKey,
 		s[2])
 	_, err = cmd.CombinedOutput()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+// }}}
+
+/*
+execGvim {{{
+*/
+func execGvim() error {
+	cmd := exec.Command("gvim")
+	_, err := cmd.CombinedOutput()
 	if err != nil {
 		return err
 	}
