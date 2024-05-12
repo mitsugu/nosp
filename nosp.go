@@ -131,6 +131,12 @@ func main() {
 					if err!=nil {
 						break
 					}
+				case "rmEvent":
+					scl :=strings.Split(cl, " ")
+					err := removeEvent(wb, scl)
+					if err!=nil {
+						break
+					}
 				case "gvim":
 					err:=execGvim()
 					if err!=nil {
@@ -461,6 +467,34 @@ func favEvent(wb []NOSTRLOG, s []string) error {
 	_, err = cmd.CombinedOutput()
 	if err != nil {
 		return err
+	}
+	return nil
+}
+// }}}
+
+/*
+removeEvent
+*/
+func removeEvent(wb []NOSTRLOG, s []string) error {
+	if len(s) > 3 {
+		return errors.New("Too many parameter!!")
+	}
+	i, err := strconv.Atoi(s[1])
+	if (err!=nil) {
+		return err
+	}
+	if len(s) <2 {
+		cmd := exec.Command("nostk", "removeEvent", wb[i].Id)
+		_, err = cmd.CombinedOutput()
+		if err != nil {
+			return err
+		}
+	} else {
+		cmd := exec.Command("nostk", "removeEvent", wb[i].Id, s[2])
+		_, err = cmd.CombinedOutput()
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
